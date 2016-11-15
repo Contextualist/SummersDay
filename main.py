@@ -21,7 +21,7 @@ def _delete(url):
     requests.delete('https://app.arukas.io/api' + url, auth=ks)
 
 def get_container():
-    containers = _fetch_json('/containers')
+    containers = _fetch_json('/containers')['data']
     for c in containers:
         if c['attributes']['image_name'] == 'contextualist/summer-session':
             return c
