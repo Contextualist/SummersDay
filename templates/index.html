@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type=text/javascript>
+  $(function() {
+    var update_display = function(data) {
+      $("#ip").text(data.ip);
+      $("#port").text(data.port);
+      $("#status").text(data.status);
+    };
+    $('a#start_btn').bind('click', function() {
+      $("#status").text('deploying...');
+      $.getJSON($SCRIPT_ROOT + '/api/start', {}, update_display);
+      return false;
+    });
+    $('a#stop_btn').bind('click', function() {
+      $("#status").text('stopping...');
+      $.getJSON($SCRIPT_ROOT + '/api/stop', {}, update_display);
+      return false;
+    });
+    $('a#refresh_btn').bind('click', function() {
+      $("#status").text('...');
+      $.getJSON($SCRIPT_ROOT + '/api/refresh', {}, update_display);
+      return false;
+    });
+    $.getJSON($SCRIPT_ROOT + '/api/refresh', {}, update_display);
+  });
+</script>
+<h1>Summer's Day</h1>
+<p><span id=ip>-.-.-.-</span>:
+   <span id=port>-</span><br/>
+   <span id=status>...</span>
+</p><br/>
+<a href=# id=start_btn>Start</a><br/>
+<a href=# id=stop_btn>Stop</a><br/>
+<a href=# id=refresh_btn>refresh</a>
+{% endblock %}
