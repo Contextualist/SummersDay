@@ -2,27 +2,39 @@
 {% block body %}
 <script type=text/javascript>
   $(function() {
+    var handler = 0;
     var update_display = function(data) {
       $("#ip").text(data.ip);
       $("#port").text(data.port);
       $("#status").text(data.status);
+      if (data.status == 'running' | data.status == 'stopped') {
+        clearInterval(handler);
+        handler = 0;
+      };
+    };
+    var activate_refresh = function() {
+      if (handler == 0) {
+        handler = setInterval(function() {
+          $.getJSON($SCRIPT_ROOT + '/api/refresh', {}, update_display);
+        }, 5000);
+      };
     };
     $('a#start_btn').bind('click', function() {
       $("#status").text('deploying...');
-      $.getJSON($SCRIPT_ROOT + '/api/start', {}, update_display);
+      $.getJSON($SCRIPT_ROOT + '/api/start', {}, activate_refresh);
       return false;
     });
     $('a#stop_btn').bind('click', function() {
       $("#status").text('stopping...');
-      $.getJSON($SCRIPT_ROOT + '/api/stop', {}, update_display);
+      $.getJSON($SCRIPT_ROOT + '/api/stop', {}, activate_refresh);
       return false;
     });
     $('a#refresh_btn').bind('click', function() {
       $("#status").text('...');
-      $.getJSON($SCRIPT_ROOT + '/api/refresh', {}, update_display);
+      activate_refresh();
       return false;
     });
-    $.getJSON($SCRIPT_ROOT + '/api/refresh', {}, update_display);
+    activate_refresh();
   });
 </script>
 <h1>Summer's Day</h1>
@@ -30,7 +42,5 @@
    <span id=port>-</span><br/>
    <span id=status>...</span>
 </p><br/>
-<a href=# id=start_btn>Start</a><br/>
-<a href=# id=stop_btn>Stop</a><br/>
-<a href=# id=refresh_btn>refresh</a>
+<a href=# id=start_btn>Start</a> | <a href=# id=stop_btn>Stop</a> | <a href=# id=refresh_btn>Refresh</a>
 {% endblock %}
