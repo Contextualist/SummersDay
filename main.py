@@ -21,6 +21,7 @@ def _delete(url):
     requests.delete('https://app.arukas.io/api' + url, auth=ks)
 
 def get_container():
+    global cid
     containers = _fetch_json('/containers')['data']
     for c in containers:
         if c['attributes']['image_name'] == 'contextualist/summer-session':
@@ -47,7 +48,7 @@ def start():
     
 @app.route('/api/stop')
 def stop():
-    if check_status()['status'] == 'running':
+    if check_status()['status'] != 'stopped':
         _delete('/containers/{cid}/power'.format(cid=cid))
     return '', 204
 
