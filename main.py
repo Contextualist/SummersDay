@@ -32,8 +32,8 @@ def check_status():
     attr = get_container()['attributes']
     rv = {}
     if attr['is_running']:
-        rv['ip'] = '.'.join(ippattern.search(attr['port_mappings'][0]['host']).group().split('-'))
-        rv['port'] = str(attr['port_mappings'][0]['service_port'])
+        rv['ip'] = '.'.join(ippattern.search(attr['port_mappings'][0][0]['host']).group().split('-'))
+        rv['port'] = str(attr['port_mappings'][0][0]['service_port'])
     else:
         rv['ip'] = '-.-.-.-'
         rv['port'] = '-'
