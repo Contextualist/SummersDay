@@ -30,33 +30,25 @@ def check_status():
     attr = get_container()['attributes']
     rv = {}
     if attr['is_running']:
-        rv['ip'] = '.'.join(ippattern.search(attr['port_mapping']['host']).group().split('-'))
-        rv['port'] = str(attr['port_mapping']['service_port'])
+        rv['ip'] = '.'.join(ippattern.search(attr['port_mappings']['host']).group().split('-'))
+        rv['port'] = str(attr['port_mappings']['service_port'])
     else:
         rv['ip'] = '-.-.-.-'
         rv['port'] = '-'
-    rv['status'] = attr['status_text']
+    rv['status'] = {'booting':'deploying...'}.get(attr['status_text'], attr['status_text'])
     return rv
 
 @app.route('/api/start')
 def start():
-    s = check_status()
-    if s['status'] != 'running':
+    if check_status()['status'] == 'stopped':
         _post('/containers/{cid}/power'.format(cid=cid))
-        while s['status'] != 'running':
-            sleep(5000)
-            s = check_status()
-    return jsonify(**s)
+    return
     
 @app.route('/api/stop')
 def stop():
-    s = check_status()
-    if s['status'] == 'running':
+    if check_status()['status'] == 'running':
         _delete('/containers/{cid}/power'.format(cid=cid))
-        while s['status'] == 'running':
-            sleep(5000)
-            s = check_status()
-    return jsonify(**s)
+    return
 
 @app.route('/api/refresh')
 def refresh():
