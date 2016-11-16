@@ -24,14 +24,15 @@ def get_container():
     containers = _fetch_json('/containers')['data']
     for c in containers:
         if c['attributes']['image_name'] == 'contextualist/summer-session':
+            cid = c['id']
             return c
 
 def check_status():
     attr = get_container()['attributes']
     rv = {}
     if attr['is_running']:
-        rv['ip'] = '.'.join(ippattern.search(attr['port_mappings']['host']).group().split('-'))
-        rv['port'] = str(attr['port_mappings']['service_port'])
+        rv['ip'] = '.'.join(ippattern.search(attr['port_mappings'][0]['host']).group().split('-'))
+        rv['port'] = str(attr['port_mappings'][0]['service_port'])
     else:
         rv['ip'] = '-.-.-.-'
         rv['port'] = '-'
@@ -42,13 +43,13 @@ def check_status():
 def start():
     if check_status()['status'] == 'stopped':
         _post('/containers/{cid}/power'.format(cid=cid))
-    return
+    return '', 204
     
 @app.route('/api/stop')
 def stop():
     if check_status()['status'] == 'running':
         _delete('/containers/{cid}/power'.format(cid=cid))
-    return
+    return '', 204
 
 @app.route('/api/refresh')
 def refresh():
@@ -56,7 +57,7 @@ def refresh():
 
 @app.route('/')
 def index():
-    cid = get_container()['id']
+    get_container()
     return render_template('index.html')
 
 @app.errorhandler(Exception)
