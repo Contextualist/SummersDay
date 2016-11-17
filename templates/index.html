@@ -7,18 +7,20 @@
       $("#ip").text(data.ip);
       $("#port").text(data.port);
       $("#status").text(data.status);
-      if (data.status == 'running' | data.status == 'stopped') {
+      if (handler != 0 & (data.status == 'running' | data.status == 'stopped')) {
         clearInterval(handler);
         handler = 0;
       };
     };
+    var refresh = function() {
+      $.getJSON($SCRIPT_ROOT + '/api/refresh', {}, update_display);
+    };
     var activate_refresh = function() {
       if (handler == 0) {
-        handler = setInterval(function() {
-          $.getJSON($SCRIPT_ROOT + '/api/refresh', {}, update_display);
-        }, 5000);
+        handler = setInterval(refresh, 5000);
       };
     };
+    refresh();
     $('a#start_btn').bind('click', function() {
       $("#status").text('deploying...');
       $.getJSON($SCRIPT_ROOT + '/api/start', {}, activate_refresh);
@@ -30,17 +32,16 @@
       return false;
     });
     $('a#refresh_btn').bind('click', function() {
-      $("#status").text('...');
+      $("#status").text('. . .');
       activate_refresh();
+      refresh();
       return false;
     });
-    activate_refresh();
   });
 </script>
 <h1>Summer's Day</h1>
-<p><span id=ip>-.-.-.-</span>:
-   <span id=port>-</span><br/>
-   <span id=status>...</span>
+<p><span id=ip>--.--.--.--</span>:<span id=port>--</span><br/>
+   <span id=status>. . .</span>
 </p><br/>
 <a href=# id=start_btn>Start</a> | <a href=# id=stop_btn>Stop</a> | <a href=# id=refresh_btn>Refresh</a>
 {% endblock %}
