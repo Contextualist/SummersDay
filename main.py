@@ -35,8 +35,8 @@ def check_status():
         rv['ip'] = '.'.join(ippattern.search(attr['port_mappings'][0][0]['host']).group().split('-'))
         rv['port'] = str(attr['port_mappings'][0][0]['service_port'])
     else:
-        rv['ip'] = '-.-.-.-'
-        rv['port'] = '-'
+        rv['ip'] = '--.--.--.--'
+        rv['port'] = '--'
     rv['status'] = {'booting':'deploying...'}.get(attr['status_text'], attr['status_text'])
     return rv
 
@@ -58,7 +58,6 @@ def refresh():
 
 @app.route('/')
 def index():
-    get_container()
     return render_template('index.html')
 
 @app.errorhandler(Exception)
