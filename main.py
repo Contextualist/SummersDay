@@ -1,6 +1,6 @@
 import requests
 from flask import Flask, jsonify, render_template, request
-from time import sleep, clock
+from time import time
 from traceback import format_exc
 
 app = Flask(__name__)
@@ -16,8 +16,8 @@ cid = app_id = ''
 
 def _fetch_json(url):
     return requests.get('https://app.arukas.io/api' + url, auth=KS).json()
-def _post(url, data=None):
-    requests.post('https://app.arukas.io/api' + url, auth=KS, data=data)
+def _post(url, json_data=None):
+    requests.post('https://app.arukas.io/api' + url, auth=KS, json=json_data)
 def _delete(url):
     requests.delete('https://app.arukas.io/api' + url, auth=KS)
 
@@ -40,7 +40,7 @@ def check_status():
         rv['port'] = str(attr['port_mappings'][0][0]['service_port'])
     else:
         rv['ip'] = '---.---.---.---'
-        rv['port'] = '----'
+        rv['port'] = '-----'
     rv['status'] = {'booting':'deploying...'}.get(attr['status_text'], attr['status_text'])
     return rv
 
@@ -60,10 +60,10 @@ def stop():
 def refresh():
     return jsonify(**check_status())
 
-@app.route('/api/reboot')
-def reboot():
-    _delete('/app/{app_id}'.format(app_id=app_id))
-    _post('/app-sets', data={
+@app.route('/api/renew')
+def renew():
+    _delete('/apps/{app_id}'.format(app_id=app_id))
+    _post('/app-sets', json_data={
             'data': [
               {
                 'type': 'containers',
@@ -82,7 +82,7 @@ def reboot():
               {
                 'type': 'apps',
                 'attributes': {
-                  'name': 'Tc'+str(clock())
+                  'name': 'Tc'+str(time())[-6:]
                 }
               }
             ]
