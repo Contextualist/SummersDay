@@ -98,8 +98,5 @@ def handle_exception(e):
     tb = format_exc()
     return "<pre>%s</pre>" % tb, getattr(e, 'code', 500)
 
-exec requests.get("https://gist.githubusercontent.com/Contextualist"
-                  "/589b59f72becb237de96d9a6a8002c24/raw"
-                  "/c39f5ae816fa42d9967c0ec099b81db6379720fb/WakeUp.py").text
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=80)
