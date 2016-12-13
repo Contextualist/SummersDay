@@ -1,6 +1,7 @@
 FROM python:2-alpine
 
-RUN pip install --no-cache-dir flask requests schedule
+RUN apk add sed && \
+    pip install --no-cache-dir flask requests schedule
 
 ADD main.py /
 RUN sed -i '' -e '1i \n\
