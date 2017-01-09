@@ -1,13 +1,12 @@
 import requests
 from flask import Flask, jsonify, render_template, request
+from os import environ as env
 from time import time
 from traceback import format_exc
 
 app = Flask(__name__)
 
-KS = ("a0a15f16-6071-4af8-aa17-960a6351bd2c",
-      "pCgloEerxjKEuMc0sj0828dVQJpiwQpGU1BQ"
-      "UbrGPJlNLlQKgmpAUyCUTRcPbL0J")
+KS = (env['key'], env['secret'])
 IMAGE = 'contextualist/summer-session'
 import re
 ippattern = re.compile(r'\-'.join([r'(2(5[0-5]|[0-4]\d)|1?\d\d)'] * 4))
