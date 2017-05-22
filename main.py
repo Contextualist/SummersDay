@@ -7,7 +7,7 @@ from traceback import format_exc
 app = Flask(__name__)
 
 KS = (env['key'], env['secret'])
-IMAGE = 'contextualist/summer-session'
+IMAGE = 'contextualist/summersession2'
 import re
 ippattern = re.compile(r'\-'.join([r'(2(5[0-5]|[0-4]\d)|1?\d\d)'] * 4))
 
@@ -29,10 +29,8 @@ def get_container():
             return c
 
 def check_status():
-    attr = get_container()['attributes']
-    if attr is None:
-        attr = {'is_running': False,
-                'status_text': 'container not found'}
+    c = get_container()
+    attr = c['attributes'] if c else {'is_running': False, 'status_text': 'container not found'}
     rv = {}
     if attr['is_running']:
         rv['ip'] = '.'.join(ippattern.search(attr['port_mappings'][0][0]['host']).group().split('-'))
@@ -81,7 +79,7 @@ def renew():
               {
                 'type': 'apps',
                 'attributes': {
-                  'name': 'Tc'+str(time())[-6:]
+                  'name': 'Tn'+str(time())[-6:]
                 }
               }
             ]
